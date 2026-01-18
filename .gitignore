@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+*.txt
+*.json
+!README.md
+!requirements.txt
+header.png
+.vscode/
+.idea/
+venv/
+env/

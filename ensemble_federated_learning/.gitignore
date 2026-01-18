@@ -1,0 +1,20 @@
+# Logs
+*.log
+*.txt
+!requirements.txt
+!README.md
+!task.md
+!implementation_plan.md
+!walkthrough.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# VS Code
+.vscode/
+
+# Environment
+.env
+venv/
