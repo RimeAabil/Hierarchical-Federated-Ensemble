@@ -1,66 +1,106 @@
-# Breast Cancer Learning Comparison
+# Comparative Analysis of Distributed Learning Architectures
 
-This repository presents a comparative study of three distributed machine learning approaches on the Breast Cancer Wisconsin dataset.
+This repository contains a comprehensive study comparing three distinct machine learning paradigms—**Centralized**, **Traditional Federated**, and **Hierarchical Federated Ensemble** learning—applied to the Breast Cancer Wisconsin dataset.
 
-##  Objective
-To evaluate and compare the performance of **Traditional Federated Learning**, **Hierarchical Federated Ensemble Learning**, and **Centralized Stacking** in terms of classification accuracy.
+The goal is to analyze the trade-offs between **accuracy**, **privacy**, and **robustness** in medical diagnostic systems.
 
-##  Repository Structure
+---
 
+##  Methodologies Explained
+
+### 1. Centralized Ensemble Stacking (The "Gold Standard")
+
+**Logic**:
+This approach assumes a traditional data warehousing model where all patient records are collected in a single central server. It represents the theoretical upper bound of performance as it has no privacy constraints or data fragmentation issues.
+
+-   **Architecture**:
+    -   **Level 0 (Base Learners)**: Three diverse models—Random Forest (RF), Gaussian Naive Bayes (GNB), and Logistic Regression (LR)—are trained on the complete dataset.
+    -   **Level 1 (Meta-Learner)**: A Logistic Regression meta-model learns to combine the predictions of the base learners (Stacking) to correct their individual biases.
+-   **Pros**: Maximize information utilization; detects global patterns easily.
+-   **Cons**: ZERO privacy; single point of failure; high bandwidth cost for data transfer.
+
+**Location**: `ensemble_stacking/`
+
+---
+
+### 2. Traditional Federated Learning (FedAvg)
+
+**Logic**:
+This models a privacy-preserving scenario using the standard **FedAvg** algorithm. Data never leaves the client devices (e.g., individual hospitals).
+
+-   **Architecture**:
+    -   **Clients**: Each client trains a local instance of a global model (Logistic Regression) on its private partition of data.
+    -   **Server**: Aggregates the weights (coefficients) from all clients by averaging them, weighted by the number of samples per client.
+-   **Process**:
+    1.  Server broadcasts global weights.
+    2.  Clients update local models and train for 1 local epoch.
+    3.  Clients send updated weights back to the server.
+    4.  Repeat.
+-   **Pros**: Strong privacy (raw data stays local); lower bandwidth than centralized.
+-   **Cons**: vulnerable to **Non-IID** data (data heterogeneity across clients can cause convergence issues).
+
+**Location**: `federated_learning/`
+
+---
+
+### 3. Hierarchical Federated Ensemble Learning (HFEL)
+
+**Logic**:
+This is a novel, hybrid architecture designed to combine the **privacy of Federated Learning** with the **robustness of Ensembles**. It introduces a 3-tier hierarchy.
+
+-   **Architecture**:
+    -   **Tier 1 (Clients)**: Like standard FL, clients hold private data. However, they are divided into groups.
+    -   **Tier 2 (Aggregators)**: Each aggregator manages a specific subset of clients and specializes in ONE type of model:
+        -   *Aggregator A*: Aggregates Gaussian Naive Bayes models.
+        -   *Aggregator B*: Aggregates Logistic Regression models.
+        -   *Aggregator C*: Aggregates Random Forest models.
+    -   **Tier 3 (Meta-Server)**: Does NOT aggregate weights. instead, it performs **Stacking** on the *predictions* of the three global aggregators.
+-   **Why strict separation?**
+    -   It allows the system to learn diverse decision boundaries (linear, probabilistic, tree-based) simultaneously in a distributed setting.
+    -   The Meta-Server fixes the weaknesses of individual aggregators.
+
+**Location**: `ensemble_federated_learning/`
+
+---
+
+##  Comparative Results & Analysis
+
+All experiments were conducted with fixed random seeds and consistent Non-IID data partitioning (clients receive asymmetric shards of data).
+
+| Method | Accuracy | Privacy | Robustness |
+| :--- | :--- | :--- | :--- |
+| **Centralized Ensemble Stacking** | **98.25%** |  None |  High |
+| **Traditional Federated Learning** | **97.37%** |  High |  Low (Single Model) |
+| **Ensemble Federated Learning (HFEL)** | **95.61%** |  High |  Medium (Ensemble) |
+
+### Key Findings
+
+1.  **The Privacy Tax**: Evaluating the transition from Centralized (98.25%) to HFEL (95.61%) reveals a **~2.6% accuracy drop**. This is the "cost" of privacy—the loss of information incurred by not pooling raw data.
+2.  **Robustness of Linear Models**: Traditional FedAvg (97.37%) performed surprisingly well. This indicates that the Breast Cancer dataset is well-separable by linear boundaries, making a simple Logistic Regression highly effective even when data is fragmented.
+3.  **The Role of HFEL**: While HFEL scored slightly lower than the single-model baseline here, its architecture provides a crucial advantage: **Parameter Obfuscation**. By using different model architectures in different groups, it makes it significantly harder for an attacker to reverse-engineer the original data from updates, as they would need to compromise multiple distinct aggregators to get a full picture.
+
+---
+
+##  Usage Instructions
+
+### Prerequisites
+```bash
+pip install -r requirements.txt
 ```
-breast-cancer-learning-comparison/
-├── federated_learning/           # Traditional FedAvg baseline (Logistic Regression)
-│   ├── client.py
-│   ├── server.py
-│   ├── model.py
-│   └── train.py
-│
-├── ensemble_federated_learning/  # Hierarchical Federated Ensemble (HFEL)
-│   ├── main.py
-│   ├── aggregators/
-│   ├── clients/
-│   └── meta_learner/
-│
-├── ensemble_stacking/            # Centralized Stacking Benchmark
-│   └── centralized_benchmark_stacking.py
-│
-└── README.md
-```
 
-## Method Comparison & Results
+### Running the Experiments
 
-We evaluated all three methods using consistent data splits and random seeds.
-
-| Method | Accuracy | Description |
-| :--- | :--- | :--- |
-| **Centralized Ensemble Stacking** | **98.25%** | The "Gold Standard". All data available centrally. Uses Stacking (LR, RF, GNB) with an LR Meta-Learner. |
-| **Traditional Federated Learning** | **97.37%** | Single global Logistic Regression model trained via **FedAvg**. Surprisingly robust on this dataset. |
-| **Ensemble Federated Learning** | **95.61%** | A 3-tier hierarchical system. Integrates heterogeneous updates (RF, GNB, LR) via a Meta-Learner. |
-
-### Analysis
-1.  **Centralized Stacking (98.25%)** achieved the highest accuracy, as expected, benefiting from direct access to the entire dataset and ensemble diversity.
-2.  **Traditional FedAvg (97.37%)** performed remarkably well, close to the centralized benchmark. This suggests that for the Breast Cancer dataset, a linear decision boundary (Logistic Regression) is highly effective and FedAvg aggregates it efficiently even with data partitioning.
-3.  **Ensemble Federated Learning (95.61%)** demonstrates the ability to combine *heterogeneous* models (RF, GNB, LR) without sharing raw data. While slightly lower than the single-model FedAvg here, it offers robustness (diversified models) and improved privacy (tiered aggregation). The Meta-Learner successfully boosted the performance of individual distributed aggregators (which scored ~92-93%) to 95.6%.
-
-##  How to Run
-
-### 1. Traditional Federated Learning
+**1. Traditional Federated Learning**
 ```bash
 python federated_learning/train.py
 ```
 
-### 2. Ensemble Federated Learning (HFEL)
+**2. Hierarchical Federated Ensemble (HFEL)**
 ```bash
 python ensemble_federated_learning/main.py
 ```
 
-### 3. Centralized Stacking
+**3. Centralized Benchmark**
 ```bash
 python ensemble_stacking/centralized_benchmark_stacking.py
 ```
-
-## 📋 Requirements
-- Python 3.8+
-- scikit-learn
-- numpy
-- pandas
