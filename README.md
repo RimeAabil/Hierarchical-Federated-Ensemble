@@ -2,32 +2,32 @@
 
 This repository presents a comparative study of three distributed machine learning approaches on the Breast Cancer Wisconsin dataset.
 
-## 🎯 Objective
+##  Objective
 To evaluate and compare the performance of **Traditional Federated Learning**, **Hierarchical Federated Ensemble Learning**, and **Centralized Stacking** in terms of classification accuracy.
 
-## 📂 Repository Structure
+##  Repository Structure
 
 ```
 breast-cancer-learning-comparison/
-├── federated_learning/           # [NEW] Traditional FedAvg baseline (Logistic Regression)
+├── federated_learning/           # Traditional FedAvg baseline (Logistic Regression)
 │   ├── client.py
 │   ├── server.py
 │   ├── model.py
 │   └── train.py
 │
-├── ensemble_federated_learning/  # [EXISTING] Hierarchical Federated Ensemble (HFEL)
+├── ensemble_federated_learning/  # Hierarchical Federated Ensemble (HFEL)
 │   ├── main.py
 │   ├── aggregators/
 │   ├── clients/
 │   └── meta_learner/
 │
-├── ensemble_stacking/            # [EXISTING] Centralized Stacking Benchmark
+├── ensemble_stacking/            # Centralized Stacking Benchmark
 │   └── centralized_benchmark_stacking.py
 │
 └── README.md
 ```
 
-## 📊 Method Comparison & Results
+## Method Comparison & Results
 
 We evaluated all three methods using consistent data splits and random seeds.
 
@@ -42,7 +42,7 @@ We evaluated all three methods using consistent data splits and random seeds.
 2.  **Traditional FedAvg (97.37%)** performed remarkably well, close to the centralized benchmark. This suggests that for the Breast Cancer dataset, a linear decision boundary (Logistic Regression) is highly effective and FedAvg aggregates it efficiently even with data partitioning.
 3.  **Ensemble Federated Learning (95.61%)** demonstrates the ability to combine *heterogeneous* models (RF, GNB, LR) without sharing raw data. While slightly lower than the single-model FedAvg here, it offers robustness (diversified models) and improved privacy (tiered aggregation). The Meta-Learner successfully boosted the performance of individual distributed aggregators (which scored ~92-93%) to 95.6%.
 
-## 🚀 How to Run
+##  How to Run
 
 ### 1. Traditional Federated Learning
 ```bash
