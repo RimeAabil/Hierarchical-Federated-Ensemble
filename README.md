@@ -357,7 +357,7 @@ Stacking is performed on **predictions**, not parameters, preserving privacy whi
 ### 3.3 Hierarchical Federated Ensemble Architecture
 
 ```markdown
-![Hierarchical Federated Ensemble Architecture](docs/architecture.png)
+![Hierarchical Federated Ensemble Architecture](architecture.png)
 ```
 
 **Key Characteristics**
