@@ -1,6 +1,6 @@
 # Comparative Analysis of Distributed Learning Architectures
 
-### Centralized, Federated, and Hierarchical Federated Ensemble Learning
+### Centralized, Federated, and Ensemble Federated Learning
 
 ## Abstract
 
