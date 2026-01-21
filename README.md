@@ -309,7 +309,7 @@ Preserve privacy by keeping data local while learning a global model.
 
 ---
 
-#### 2.3.3 Hierarchical Federated Ensemble Learning (HFEL)
+#### 2.3.3 Ensemble Federated Learning
 
 **Objective**
 Combine federated privacy guarantees with ensemble robustness.
@@ -354,11 +354,14 @@ Stacking is performed on **predictions**, not parameters, preserving privacy whi
 * Homogeneous model family
 * Weight-based aggregation
 
-### 3.3 Hierarchical Federated Ensemble Architecture
 
-```markdown
+### 3.3 Hierarchical Federated Ensemble Learning Architecture
+
+The following diagram illustrates the multi-tier structure of the proposed ensemble federated learning system, highlighting
+the separation between clients, model-specific aggregators, and the meta-learning server.
+
 ![Hierarchical Federated Ensemble Architecture](architecture.png)
-```
+
 
 **Key Characteristics**
 
