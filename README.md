@@ -99,6 +99,8 @@ This section explains **how information flows**, **how models are trained**, and
 
    * The meta-model outputs the final classification.
 
+![Stacking Ensemble Architecture](stacking.png)
+
 ### Core Logic Summary
 
 > Instead of trusting a single model, the system **learns how to trust models differently depending on their strengths**.
@@ -151,6 +153,8 @@ This section explains **how information flows**, **how models are trained**, and
 
 > Each client learns *part of the truth*, and the server averages these partial truths into a single global model.
 
+![Federated Learning Architecture](federated.png)
+
 ### Key Implication
 
 * Strong privacy
@@ -160,7 +164,7 @@ This section explains **how information flows**, **how models are trained**, and
 
 ---
 
-## 3. Hierarchical Federated Ensemble Learning (HFEL)
+## 3. Ensemble Federated Learning
 
 ### Logic: *“Divide intelligence, preserve privacy, combine decisions”*
 
