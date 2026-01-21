@@ -439,5 +439,5 @@ python ensemble_federated_learning/main.py
 
 ## 8. Conclusion
 
-This study demonstrates that **Hierarchical Federated Ensemble Learning** offers a principled compromise between privacy, robustness, and performance, making it a promising candidate for privacy-sensitive, real-world medical AI systems.
+This study demonstrates that **Ensemble Federated Learning** offers a principled compromise between privacy, robustness, and performance, making it a promising candidate for privacy-sensitive, real-world medical AI systems.
 
